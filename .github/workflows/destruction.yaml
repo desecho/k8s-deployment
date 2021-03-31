@@ -1,0 +1,50 @@
+name: Destruction
+on:
+  workflow_dispatch:
+    inputs:
+      destroy_nginx_ingress:
+        description: "Destroy nginx-ingress"
+        required: false
+        default: ""
+      destroy_cert_manager:
+        description: "Destroy cert-manager"
+        required: false
+        default: ""
+      destroy_mysql:
+        description: "Destroy MySQL"
+        required: false
+        default: ""
+jobs:
+  destruction:
+    name: Destruction
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v1
+      - name: Save kubeconfig
+        run: echo $KUBECONFIG_DATA > /tmp/kubeconfig
+        env:
+          KUBECONFIG_DATA: ${{ secrets.KUBECONFIG_DATA }}
+      - name: Destroy nginx-ingress
+        run: kubectl delete namespace ingress-nginx
+        env:
+          KUBECONFIG: /tmp/kubeconfig
+        if: ${{ github.event.inputs.destroy_nginx_ingress }}
+      - name: Destroy cert-manager
+        run: |
+          kubectl delete namespace cert-manager
+          kubectl delete -f cert-manager/production-issuer.yaml
+        env:
+          KUBECONFIG: /tmp/kubeconfig
+        if: ${{ github.event.inputs.destroy_cert_manager }}
+      - name: Destroy MySQL
+        run: |
+          kubectl delete secret mysql
+          kubectl delete -f mysql/mysql-volume.yaml
+          kubectl delete -f mysql/mysql-deployment.yaml
+          kubectl delete -f mysql/mysql-service.yaml
+        env:
+          KUBECONFIG: /tmp/kubeconfig
+        if: ${{ github.event.inputs.destroy_mysql }}
