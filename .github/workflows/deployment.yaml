@@ -23,26 +23,24 @@ jobs:
         uses: actions/checkout@v2
       - name: Install kubectl
         uses: azure/setup-kubectl@v1
+      - name: Configure kubectl
+        run: |
+          mkdir ~/.kube
+          echo $KUBECONFIG > ~/.kube/config
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
       - name: Install helm
         uses: azure/setup-helm@v1
-      - name: Save kubeconfig
-        run: echo $KUBECONFIG_DATA > /tmp/kubeconfig
-        env:
-          KUBECONFIG_DATA: ${{ secrets.KUBECONFIG_DATA }}
       - name: Deploy nginx-ingress
         run: scripts/deploy_nginx_ingress.sh
-        env:
-          KUBECONFIG: /tmp/kubeconfig
         if: ${{ github.event.inputs.deploy_nginx_ingress }}
       - name: Deploy cert-manager
         run: scripts/deploy_cert_manager.sh
         env:
-          KUBECONFIG: /tmp/kubeconfig
           EMAIL: ${{ secrets.EMAIL }}
         if: ${{ github.event.inputs.deploy_cert_manager }}
       - name: Deploy MySQL
         run: scripts/deploy_mysql.sh
         env:
-          KUBECONFIG: /tmp/kubeconfig
           MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         if: ${{ github.event.inputs.deploy_mysql }}

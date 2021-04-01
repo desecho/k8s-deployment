@@ -23,21 +23,19 @@ jobs:
         uses: actions/checkout@v2
       - name: Install kubectl
         uses: azure/setup-kubectl@v1
-      - name: Save kubeconfig
-        run: echo $KUBECONFIG_DATA > /tmp/kubeconfig
+      - name: Configure kubectl
+        run: |
+          mkdir ~/.kube
+          echo $KUBECONFIG > ~/.kube/config
         env:
-          KUBECONFIG_DATA: ${{ secrets.KUBECONFIG_DATA }}
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
       - name: Destroy nginx-ingress
         run: kubectl delete namespace ingress-nginx
-        env:
-          KUBECONFIG: /tmp/kubeconfig
         if: ${{ github.event.inputs.destroy_nginx_ingress }}
       - name: Destroy cert-manager
         run: |
           kubectl delete namespace cert-manager
           kubectl delete -f cert-manager/production-issuer.yaml
-        env:
-          KUBECONFIG: /tmp/kubeconfig
         if: ${{ github.event.inputs.destroy_cert_manager }}
       - name: Destroy MySQL
         run: |
@@ -45,6 +43,4 @@ jobs:
           kubectl delete -f mysql/mysql-volume.yaml
           kubectl delete -f mysql/mysql-deployment.yaml
           kubectl delete -f mysql/mysql-service.yaml
-        env:
-          KUBECONFIG: /tmp/kubeconfig
         if: ${{ github.event.inputs.destroy_mysql }}
