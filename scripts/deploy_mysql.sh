@@ -23,7 +23,7 @@ function waitForReadiness() {
     fi
 }
 
-kubectl create secret generic mysql --from-literal=MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+kubectl create secret generic mysql --from-literal=MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD --dry-run -o yaml | kubectl apply -f -
 kubectl apply -f mysql/mysql-volume.yaml
 kubectl apply -f mysql/mysql-deployment.yaml
 kubectl apply -f mysql/mysql-service.yaml

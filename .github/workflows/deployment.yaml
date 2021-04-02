@@ -21,24 +21,30 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Install kubectl
         uses: azure/setup-kubectl@v1
+
       - name: Configure kubectl
         run: |
           mkdir ~/.kube
           echo $KUBECONFIG > ~/.kube/config
         env:
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
-      - name: Install helm
+
+      - name: Install Helm
         uses: azure/setup-helm@v1
+
       - name: Deploy nginx-ingress
         run: scripts/deploy_nginx_ingress.sh
         if: ${{ github.event.inputs.deploy_nginx_ingress }}
+
       - name: Deploy cert-manager
         run: scripts/deploy_cert_manager.sh
         env:
           EMAIL: ${{ secrets.EMAIL }}
         if: ${{ github.event.inputs.deploy_cert_manager }}
+
       - name: Deploy MySQL
         run: scripts/deploy_mysql.sh
         env:

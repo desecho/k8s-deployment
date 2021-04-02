@@ -21,22 +21,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Install kubectl
         uses: azure/setup-kubectl@v1
+
       - name: Configure kubectl
         run: |
           mkdir ~/.kube
           echo $KUBECONFIG > ~/.kube/config
         env:
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
       - name: Destroy nginx-ingress
         run: kubectl delete namespace ingress-nginx
         if: ${{ github.event.inputs.destroy_nginx_ingress }}
+
       - name: Destroy cert-manager
         run: |
           kubectl delete namespace cert-manager
           kubectl delete -f cert-manager/production-issuer.yaml
         if: ${{ github.event.inputs.destroy_cert_manager }}
+
       - name: Destroy MySQL
         run: |
           kubectl delete secret mysql
