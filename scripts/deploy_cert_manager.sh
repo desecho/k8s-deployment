@@ -36,7 +36,7 @@ function createClusterIssuer() {
         kubectl apply -f cert-manager/production-issuer.yaml 2>/dev/null
         local kubectl_apply_exit_code=$?
         if [[ $kubectl_apply_exit_code == "0" ]]; then
-            "Cluster issuer is ready."
+            echo "Cluster issuer is ready."
             break
         else
             echo "Retrying..."
