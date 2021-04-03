@@ -28,9 +28,7 @@ jobs:
       - name: Configure kubectl
         run: |
           mkdir ~/.kube
-          echo $KUBECONFIG > ~/.kube/config
-        env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          echo ${{ secrets.KUBECONFIG }} > ~/.kube/config
 
       - name: Destroy nginx-ingress
         run: kubectl delete namespace ingress-nginx
