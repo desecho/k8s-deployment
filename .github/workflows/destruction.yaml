@@ -19,11 +19,16 @@ jobs:
     name: Destruction
     runs-on: ubuntu-latest
     steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install kubectl
-        uses: azure/setup-kubectl@v1
+        uses: azure/setup-kubectl@v2
 
       - name: Configure kubectl
         run: |
