@@ -7,7 +7,7 @@ function wait_for_readiness() {
     local retries=0
     while [ "${retries}" -lt 10 ]; do
         local ready_replicas
-        ready_replicas="$(kubectl get deployment.apps/cert-manager-webhook --namespace cert-manager  -o=jsonpath='{.status.readyReplicas}')"
+        ready_replicas="$(kubectl get deployment.apps/cert-manager-webhook --namespace cert-manager -o=jsonpath='{.status.readyReplicas}')"
         if [[ "$ready_replicas" == "1" ]]; then
             echo "Replica is ready"
             break
@@ -34,7 +34,7 @@ function createClusterIssuer() {
     local retries=0
     set +e
     while [ "${retries}" -lt 10 ]; do
-        kubectl apply -f cert-manager/production-issuer.yaml 2>/dev/null
+        kubectl apply -f cert-manager/production-issuer.yaml 2> /dev/null
         local exit_code="$?"
         if [[ "$exit_code" == "0" ]]; then
             echo "Cluster issuer is ready."
