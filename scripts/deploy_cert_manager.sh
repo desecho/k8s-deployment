@@ -1,14 +1,15 @@
 #!/bin/bash
 
-set -eu
+set -eou pipefail
 
-function waitForReadiness() {
+function wait_for_readiness() {
     echo "Waiting for readiness..."
     local retries=0
     while [ "${retries}" -lt 10 ]; do
-        local ready_replicas=$(kubectl get deployment.apps/cert-manager-webhook --namespace cert-manager  -o=jsonpath='{.status.readyReplicas}')
-        if [[ $ready_replicas == "1" ]]; then
-            echo "Replica is ready."
+        local ready_replicas
+        ready_replicas="$(kubectl get deployment.apps/cert-manager-webhook --namespace cert-manager  -o=jsonpath='{.status.readyReplicas}')"
+        if [[ "$ready_replicas" == "1" ]]; then
+            echo "Replica is ready"
             break
         else
             echo "Retrying..."
@@ -18,7 +19,7 @@ function waitForReadiness() {
     done
 
     if [ -z "${ready_replicas}" ]; then
-        echo "Timeout."
+        echo "Timeout"
         return 1
     fi
 }
@@ -34,8 +35,8 @@ function createClusterIssuer() {
     set +e
     while [ "${retries}" -lt 10 ]; do
         kubectl apply -f cert-manager/production-issuer.yaml 2>/dev/null
-        local kubectl_apply_exit_code=$?
-        if [[ $kubectl_apply_exit_code == "0" ]]; then
+        local exit_code="$?"
+        if [[ "$exit_code" == "0" ]]; then
             echo "Cluster issuer is ready."
             break
         else
@@ -45,7 +46,7 @@ function createClusterIssuer() {
         fi
     done
 
-    if [[ $kubectl_apply_exit_code != "0" ]]; then
+    if [[ "$exit_code" != "0" ]]; then
         echo "Timeout."
     fi
 }
@@ -55,5 +56,5 @@ helm repo add jetstack https://charts.jetstack.io
 helm repo update
 helm install cert-manager jetstack/cert-manager --namespace cert-manager --set installCRDs=true
 sed "s/\[email\]/$EMAIL/g" cert-manager/production-issuer.yaml -i
-waitForReadiness
+wait_for_readiness
 createClusterIssuer
