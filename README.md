@@ -3,6 +3,7 @@
 Deployments for:
 - nginx-ingress with MySQL support
 - MySQL
+- Redis
 - Let's Encrypt cert-manager
 
 These GitHub secret variables have to be set for deployment:
@@ -18,7 +19,7 @@ For MySQL deployment you need to set this variable:
 
 [GitHub Actions](https://github.com/features/actions) are used for CI/CD.
 
-Deployment is manually done in master branch.
+Deployment is done manually in the master branch.
 
 The following GitHub Actions are used:
 

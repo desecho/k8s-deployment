@@ -1,3 +1,4 @@
+---
 name: Destruction
 on:
   workflow_dispatch:
@@ -12,6 +13,10 @@ on:
         default: ""
       destroy_mysql:
         description: "Destroy MySQL"
+        required: false
+        default: ""
+      destroy_redis:
+        description: "Destroy Redis"
         required: false
         default: ""
 jobs:
@@ -54,3 +59,9 @@ jobs:
           kubectl delete -f mysql/mysql-deployment.yaml
           kubectl delete -f mysql/mysql-service.yaml
         if: ${{ github.event.inputs.destroy_mysql }}
+
+      - name: Destroy Redis
+        run: |
+          kubectl delete -f redis/redis-deployment.yaml
+          kubectl delete -f redis/redis-service.yaml
+        if: ${{ github.event.inputs.destroy_redis }}

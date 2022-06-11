@@ -14,6 +14,10 @@ on:
         description: "Deploy MySQL"
         required: false
         default: ""
+      deploy_redis:
+        description: "Deploy Redis"
+        required: false
+        default: ""
 jobs:
   deployment:
     name: Deployment
@@ -35,7 +39,7 @@ jobs:
           mkdir ~/.kube
           echo $KUBECONFIG > ~/.kube/config
         env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}  # Done as a variable because it doesn't work in place.
 
       - name: Install Helm
         uses: azure/setup-helm@v2
@@ -55,3 +59,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         if: ${{ github.event.inputs.deploy_mysql }}
+
+      - name: Deploy Redis
+        run: scripts/deploy_redis.sh
+        if: ${{ github.event.inputs.deploy_redis }}
