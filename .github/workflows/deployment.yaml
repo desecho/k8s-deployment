@@ -19,38 +19,19 @@ on:
         description: "Deploy Redis"
         required: false
         default: ""
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
 jobs:
+  test:
+    name: Test
+    uses: ./.github/workflows/reusable_test.yaml
   deployment:
     name: Deployment
     runs-on: ubuntu-latest
+    needs: test
     steps:
-      - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ github.token }}
-
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          registry-url: https://registry.npmjs.org
-
-      - name: Use npm cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: npm
-
-      - name: Install linters
-        run: |
-          make install-linters-binaries
-          sudo npm install -g markdownlint-cli
-
-      - name: Run linters
-        run: make lint
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v2.0
