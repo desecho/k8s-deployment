@@ -32,7 +32,7 @@ jobs:
 
       - name: Install linters
         run: |
-          make install-shfmt
+          make install-linters-binaries
           sudo npm install -g markdownlint-cli
 
       - name: Run linters
