@@ -25,7 +25,7 @@ jobs:
       - name: Install linters
         run: |
           make install-linters-binaries
-          sudo npm install -g markdownlint-cli
+          sudo npm install -g markdownlint-cli prettier
 
       - name: Run linters
         run: make lint

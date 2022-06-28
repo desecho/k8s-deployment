@@ -44,7 +44,7 @@ lint:
 	shfmt -l -d .
 	shellcheck scripts/*.sh
 	markdownlint README.md
-	yamllint .github cert-manager mysql nginx-ingress redis
+	prettier --check ./.github/**/*.yaml ./**/*.yaml
 	actionlint
 
 .PHONY: format
@@ -52,3 +52,4 @@ lint:
 format:
 	shfmt -l -w .
 	markdownlint README.md --fix
+	prettier --write ./.github/**/*.yaml ./**/*.yaml
