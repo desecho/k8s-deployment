@@ -5,7 +5,7 @@ set -eou pipefail
 function wait_for_readiness() {
     echo "Waiting for readiness..."
     local retries=0
-    while [ "${retries}" -lt 15 ]; do
+    while [ "${retries}" -lt 30 ]; do
         local ip
         ip="$(kubectl get service/nginx-ingress-ingress-nginx-controller -n ingress-nginx -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')"
         if [[ -n "$ip" ]]; then
